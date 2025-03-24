@@ -1,21 +1,18 @@
-import { randomUUID } from "crypto"
+import { Entity } from "../../core/entities/entitie"
 
-interface AnswerProps{
+interface AnswerProps {
   content: string
   authorId: string
   questionId:string
 }
 
-export class Answer {
-  public content: string
-  public authorId: string
-  public questionId: string
-  public id: string
+export class Answer extends Entity<AnswerProps>{
   
+  get content(){
+    return this.props.content
+  }
+
   constructor(props: AnswerProps, id?: string){
-    this.content = props.content
-    this.authorId = props.authorId
-    this.questionId = props.questionId
-    this.id = id ?? randomUUID()
+    super(props, id)
   }
 }
