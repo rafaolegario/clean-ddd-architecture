@@ -5,5 +5,9 @@
 ],
   "env": {
     "vitest-globals/env":true
+  },
+  
+  "rules": {
+    "no-useless-constructor":"off"
   }
 }
