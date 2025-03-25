@@ -7,7 +7,15 @@ interface InstructorProps {
 
 export class Instructor extends Entity<InstructorProps> {
 
-  constructor(props: InstructorProps, id?: UniqueEntityID){
-    super(props, id)
+  static create(props: InstructorProps , id?: UniqueEntityID) {
+    const answer = new Instructor({
+      ...props,
+    }, id)
+  
+    return answer
+  }
+
+  get name(){
+    return this.props.name
   }
 }

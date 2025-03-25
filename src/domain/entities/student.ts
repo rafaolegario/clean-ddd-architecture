@@ -7,7 +7,15 @@ interface StudentProps {
 
 export class Student extends Entity<StudentProps> {
   
-  constructor( props: StudentProps ,id?: UniqueEntityID){
-    super(props, id)
+  static create(props: StudentProps , id?: UniqueEntityID) {
+    const answer = new Student({
+      ...props,
+    }, id)
+  
+    return answer
+  }
+
+  get name(){
+    return this.props.name
   }
 }
