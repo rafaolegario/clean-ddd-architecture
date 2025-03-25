@@ -10,6 +10,7 @@ export function MakeQuestion(override: Partial<QuestionProps> = {}) {
     authorId: new UniqueEntityID(),
     title: 'Test question',
     content: 'New question',
+    ...override,
   })
 
   return question
