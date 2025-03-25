@@ -1,59 +1,60 @@
-import { Optional } from "../../core/@types/optional"
-import { Entity } from "../../core/entities/entitie"
-import { UniqueEntityID } from "../../core/entities/unique-entity-id"
+import { Optional } from '@/core/@types/optional'
+import { Entity } from '@/core/entities/entitie'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 
 interface AnswerProps {
   authorId: UniqueEntityID
-  questionId:UniqueEntityID
+  questionId: UniqueEntityID
   content: string
   createdAt: Date
   updatedAt?: Date
 }
 
-export class Answer extends Entity<AnswerProps>{
-
- static create(props: Optional<AnswerProps, 'createdAt'>, id?: UniqueEntityID) {
-    const answer = new Answer({
-      ...props,
-      createdAt: new Date()
-    }, id)
+export class Answer extends Entity<AnswerProps> {
+  static create(
+    props: Optional<AnswerProps, 'createdAt'>,
+    id?: UniqueEntityID,
+  ) {
+    const answer = new Answer(
+      {
+        ...props,
+        createdAt: new Date(),
+      },
+      id,
+    )
 
     return answer
   }
 
-  get content(){
+  get content() {
     return this.props.content
   }
 
-  get authorId(){
+  get authorId() {
     return this.props.authorId
   }
 
-  get questionId(){
+  get questionId() {
     return this.props.questionId
   }
 
-  get excerpt(){
-    return this.content
-    .substring(0, 120)
-    .trim()
-    .concat('...')
+  get excerpt() {
+    return this.content.substring(0, 120).trim().concat('...')
   }
 
-  get createdAt(){
+  get createdAt() {
     return this.props.createdAt
   }
 
-  get updatedAt(){
+  get updatedAt() {
     return this.props.updatedAt
   }
 
-
-  private touch(){
+  private touch() {
     this.props.updatedAt = new Date()
   }
 
-  set content(text: string){
+  set content(text: string) {
     this.props.content = text
     this.touch()
   }
