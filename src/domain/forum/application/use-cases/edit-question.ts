@@ -33,6 +33,8 @@ export class EditQuestionUseCase {
 
     await this.QuestionsRepository.save(question)
 
-    return {}
+    return {
+      question,
+    }
   }
 }

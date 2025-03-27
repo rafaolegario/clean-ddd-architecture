@@ -33,7 +33,7 @@ describe('Best answer', () => {
       authorID: question.authorId.toString(),
     })
 
-    expect(question.bestAnswerId?.toString()).any.toString()
+    expect(inMemoryQuestionRepository.items[0].bestAnswerId).toEqual(answer.id)
   })
 
   it('Should not be able to choose best answer from another user questions', async () => {
