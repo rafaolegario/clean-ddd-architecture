@@ -13,10 +13,17 @@ describe('Delete question', () => {
   })
 
   it('Should be able to delete an question', async () => {
-    const question = MakeQuestion({}, new UniqueEntityID('1'))
+    const question = MakeQuestion(
+      {
+        authorId: new UniqueEntityID('author-1'),
+      },
+      new UniqueEntityID('question-1'),
+    )
 
-    await sut.execute({ questionID: '1' })
+    await inMemoryQuestionRepository.create(question)
 
-    expect(question.id.toString()).toEqual(undefined)
+    await sut.execute({ questionID: 'question-1', authorID: 'author-1' })
+
+    expect(inMemoryQuestionRepository.items).toHaveLength(0)
   })
 })
