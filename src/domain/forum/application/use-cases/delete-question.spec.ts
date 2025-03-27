@@ -26,4 +26,22 @@ describe('Delete question', () => {
 
     expect(inMemoryQuestionRepository.items).toHaveLength(0)
   })
+
+  it('Should not be able to delete an question from another user', async () => {
+    const question = MakeQuestion(
+      {
+        authorId: new UniqueEntityID('author-1'),
+      },
+      new UniqueEntityID('question-1'),
+    )
+
+    await inMemoryQuestionRepository.create(question)
+
+    expect(async () => {
+      await sut.execute({
+        questionID: 'question-1',
+        authorID: 'author-2',
+      })
+    }).rejects.toBeInstanceOf(Error)
+  })
 })
