@@ -2,6 +2,7 @@ import { QuestionsRepository } from '../repositories/question-repository'
 
 interface DeleteQuestionUseCaseRequest {
   questionID: string
+  authorID: string
 }
 
 interface DeleteQuestionUseCaseResponse {}
@@ -11,6 +12,7 @@ export class DeleteQuestionUseCase {
 
   async execute({
     questionID,
+    authorID,
   }: DeleteQuestionUseCaseRequest): Promise<DeleteQuestionUseCaseResponse> {
     const question = await this.QuestionsRepository.findById(questionID)
 
@@ -18,7 +20,11 @@ export class DeleteQuestionUseCase {
       throw new Error('Question not found!')
     }
 
-    await this.QuestionsRepository.delete(questionID)
+    if (authorID !== question.authorId.toString()) {
+      throw new Error('Not allowed!')
+    }
+
+    await this.QuestionsRepository.delete(question)
 
     return {}
   }
