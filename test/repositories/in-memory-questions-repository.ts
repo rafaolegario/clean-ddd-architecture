@@ -8,8 +8,10 @@ export class InMemoryQuestionRepository implements QuestionsRepository {
     this.items.push(question)
   }
 
-  async delete(id: string) {
-    this.items = this.items.filter((item) => item.id.toValue() !== id)
+  async delete(question: Question) {
+    this.items = this.items.filter(
+      (item) => item.id.toString() !== question.id.toString(),
+    )
   }
 
   async findBySlug(slug: string) {
