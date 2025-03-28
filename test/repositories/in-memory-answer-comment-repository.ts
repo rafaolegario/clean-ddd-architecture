@@ -9,4 +9,20 @@ export class InMemoryAnswerCommentRepository
   async create(answerComment: AnswerComment) {
     this.items.push(answerComment)
   }
+
+  async delete(comment: AnswerComment) {
+    this.items = this.items.filter(
+      (item) => item.id.toString() !== comment.id.toString(),
+    )
+  }
+
+  async findById(id: string) {
+    const comment = this.items.find((item) => item.id.toValue() === id)
+
+    if (!comment) {
+      return
+    }
+
+    return comment
+  }
 }
