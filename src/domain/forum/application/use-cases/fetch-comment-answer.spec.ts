@@ -28,12 +28,12 @@ describe('Fetch answer comments', () => {
       await inMemoryAnswerCommentRepository.create(AnswerComment)
     }
 
-    const { CommentAnswers } = await sut.execute({
+    const result = await sut.execute({
       answerID: answer.id.toString(),
       page: 1,
     })
 
-    expect(CommentAnswers).toHaveLength(5)
+    expect(result.value?.CommentAnswers).toHaveLength(5)
   })
 
   it('Should be able to paginated comments in a answer', async () => {
@@ -49,11 +49,11 @@ describe('Fetch answer comments', () => {
       await inMemoryAnswerCommentRepository.create(AnswerComment)
     }
 
-    const { CommentAnswers } = await sut.execute({
+    const result = await sut.execute({
       answerID: answer.id.toString(),
       page: 2,
     })
 
-    expect(CommentAnswers).toHaveLength(2)
+    expect(result.value?.CommentAnswers).toHaveLength(2)
   })
 })
