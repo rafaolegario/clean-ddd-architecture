@@ -20,6 +20,8 @@ describe('Create questions', () => {
     })
 
     expect(result.isRight()).toBe(true)
-    expect(inMemoryQuestionRepository.items[0].attachments).toHaveLength(2)
+    expect(
+      inMemoryQuestionRepository.items[0].attachments.currentItems,
+    ).toHaveLength(2)
   })
 })
