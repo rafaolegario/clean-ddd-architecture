@@ -2,14 +2,21 @@ import { InMemoryAnswerCommentRepository } from 'test/repositories/in-memory-ans
 import { AnswerCommentUseCase } from './comment-on-answer'
 import { MakeAnswer } from 'test/factories/make-answer'
 import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository'
+import { InMemoryAnswerAttachmentRepository } from 'test/repositories/in-memory-answer-attachments-repositort'
 
 let inMemoryAnswerRepository: InMemoryAnswersRepository
 let inMemoryAnswerCommentRepository: InMemoryAnswerCommentRepository
 let sut: AnswerCommentUseCase
+let inMemoryAnswerAttachmentRepository: InMemoryAnswerAttachmentRepository
 
 describe('Create answer comment', () => {
   beforeEach(() => {
-    inMemoryAnswerRepository = new InMemoryAnswersRepository()
+    inMemoryAnswerAttachmentRepository =
+      new InMemoryAnswerAttachmentRepository()
+
+    inMemoryAnswerRepository = new InMemoryAnswersRepository(
+      inMemoryAnswerAttachmentRepository,
+    )
     inMemoryAnswerCommentRepository = new InMemoryAnswerCommentRepository()
     sut = new AnswerCommentUseCase(
       inMemoryAnswerRepository,
