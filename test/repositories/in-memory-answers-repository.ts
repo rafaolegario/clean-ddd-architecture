@@ -1,8 +1,13 @@
 import { PaginationParams } from '@/core/repositories/pagination-parms'
+import { AnswerAttachmentsRepository } from '@/domain/forum/application/repositories/answer-attachment-repository'
 import { AnswersRepository } from '@/domain/forum/application/repositories/answers-repository'
 import { Answer } from '@/domain/forum/enterprise/entities/answer'
 
 export class InMemoryAnswersRepository implements AnswersRepository {
+  constructor(
+    private answerAttachmentRepository: AnswerAttachmentsRepository,
+  ) {}
+
   public items: Answer[] = []
 
   async create(answer: Answer) {
@@ -13,6 +18,16 @@ export class InMemoryAnswersRepository implements AnswersRepository {
     this.items = this.items.filter(
       (item) => item.id.toString() !== answer.id.toString(),
     )
+
+    this.answerAttachmentRepository.deleteManyByAnswerId(answer.id.toString())
+  }
+
+  async save(answer: Answer) {
+    const ItemIndex = this.items.findIndex(
+      (item) => item.id.toString() === answer.id.toString(),
+    )
+
+    this.items[ItemIndex] = answer
   }
 
   async findById(id: string) {
@@ -25,9 +40,9 @@ export class InMemoryAnswersRepository implements AnswersRepository {
     return answer
   }
 
-  async fetchManyByQuestionId(question: string, { page }: PaginationParams) {
+  async fetchManyByQuestionId(questionId: string, { page }: PaginationParams) {
     const answers = this.items
-      .filter((item) => item.questionId.toString() === question)
+      .filter((item) => item.questionId.toString() === questionId)
       .slice((page - 1) * 20, page * 20)
 
     return answers
