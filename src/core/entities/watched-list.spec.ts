@@ -1,55 +1,50 @@
-import { WatchedList } from './watched-list'
+import { DomainEvent } from '../events/domain-event'
+import { DomainEvents } from '../events/domain-events'
+import { AggregateRoot } from './aggregate-root'
+import { UniqueEntityID } from './unique-entity-id'
 
-class NumberWatchedList extends WatchedList<number> {
-  compareItems(a: number, b: number): boolean {
-    return a === b
+class CustomAggregateCreated implements DomainEvent {
+  public ocurredAt: Date
+  private aggregate: CustomAggregate // eslint-disable-line
+
+  constructor(aggregate: CustomAggregate) {
+    this.ocurredAt = new Date()
+    this.aggregate = aggregate
+  }
+
+  public getAggregateId(): UniqueEntityID {
+    return this.aggregate.id
   }
 }
 
-describe('Watched List', () => {
-  it('Should be able to crate a watched list with initial items', () => {
-    const list = new NumberWatchedList([1, 2, 3])
+class CustomAggregate extends AggregateRoot<null> {
+  static create() {
+    const aggregate = new CustomAggregate(null)
 
-    expect(list.currentItems).toHaveLength(3)
-  })
+    aggregate.addDomainEvent(new CustomAggregateCreated(aggregate))
 
-  it('Should be able to add new items to the list', () => {
-    const list = new NumberWatchedList([1, 2, 3])
-    list.add(4)
-    expect(list.currentItems).toHaveLength(4)
-    expect(list.getNewItems()).toEqual([4])
-  })
+    return aggregate
+  }
+}
 
-  it('Should be able to remove items to the list', () => {
-    const list = new NumberWatchedList([1, 2, 3])
-    list.remove(2)
-    expect(list.currentItems).toHaveLength(2)
-    expect(list.getRemovedItems()).toEqual([2])
-  })
+describe('Domain events', () => {
+  it('Should be able to dispatch and listen to events', () => {
+    const callbackSpy = vi.fn()
 
-  it('Should be able to add an item even if it was removed before', () => {
-    const list = new NumberWatchedList([1, 2, 3])
-    list.remove(2)
-    list.add(2)
-    expect(list.currentItems).toHaveLength(3)
-    expect(list.getNewItems()).toEqual([])
-    expect(list.getRemovedItems()).toEqual([])
-  })
+    // Subscriber cadastrado (ouvindo o evento de "resposta criada")
+    DomainEvents.register(callbackSpy, CustomAggregateCreated.name)
 
-  it('Should be able to remove an item even if it was added before', () => {
-    const list = new NumberWatchedList([1, 2, 3])
-    list.add(2)
-    list.remove(2)
-    expect(list.currentItems).toHaveLength(2)
-    expect(list.getNewItems()).toEqual([])
-    expect(list.getRemovedItems()).toEqual([2])
-  })
+    // Criando uma resposta porém SEM salvar no banco
+    const aggregate = CustomAggregate.create()
 
-  it('Should be able to update watched list items', () => {
-    const list = new NumberWatchedList([1, 2, 3])
-    list.update([1, 3, 5])
-    expect(list.currentItems).toHaveLength(3)
-    expect(list.getNewItems()).toEqual([5])
-    expect(list.getRemovedItems()).toEqual([2])
+    // Assegurando que o evento foi criado porém não foi desparado
+    expect(aggregate.domainEvents).toHaveLength(1)
+
+    // Salvando a resposta no banco de dados e assim disparado o evento
+    DomainEvents.dispatchEventsForAggregate(aggregate.id)
+
+    // Subscriber ouve o evento e faz o que precisa ser feito com o dado
+    expect(callbackSpy).toHaveBeenCalled()
+    expect(aggregate.domainEvents).toHaveLength(0)
   })
 })
